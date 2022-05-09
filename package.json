@@ -1,0 +1,41 @@
+{
+  "name": "ipfs-onchain-cli",
+  "description": "Uploading local files to IPFS and anchoring it on Ethereum chain",
+  "scripts": {
+    "watch": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "watch:windows": "nodemon --watch 'src/**/*.ts' --exec \"npx ts-node\" src/index.ts",
+    "build": "tsc -p .",
+    "test": "ts-mocha test/*.ts --exit --timeout 60000",
+    "build-and-test": "npm run build && npm run test",
+    "install-cli": "sudo npm uninstall -g && npm run build && sudo npm i -g && ipfs-onchain",
+    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install",
+    "publish": "npm publish",
+    "upload-sample-file": "npm run build && npx ts-node ./lib/index.js -u dummyFiles/simple.txt",
+    "list-cids-filtered": "npm run build && npx ts-node ./lib/index.js -l -o 0x15358AFBc4c1d38Dd17aaF29269602a1d3595E07",
+    "list-cids-all": "npm run build && npx ts-node ./lib/index.js -l"
+  },
+  "main": "./lib/index.js",
+  "bin": {
+    "ipfs-onchain": "./lib/index.js"
+  },
+  "dependencies": {
+    "@truffle/hdwallet-provider": "^2.0.8",
+    "chalk": "^4.1.2",
+    "commander": "^9.2.0",
+    "dotenv": "^16.0.0",
+    "figlet": "^1.5.2",
+    "ipfs-core": "^0.14.3",
+    "web3": "^1.7.3"
+  },
+  "devDependencies": {
+    "@types/clear": "^0.1.2",
+    "@types/figlet": "^1.5.4",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "^17.0.31",
+    "mocha": "^10.0.0",
+    "nodemon": "^2.0.16",
+    "ts-mocha": "^10.0.0",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
+  }
+}
