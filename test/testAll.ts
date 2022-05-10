@@ -13,6 +13,7 @@ describe('saving on IPFS and anchoring on Registry contract', () => {
   const web3Manager = new Web3Manager();
   const registryManager = new RegistryManager();
   let cid: string;
+  let firstTransactionBlockNumber: number;
   it('...should store the provided file on IPFS and get its CID', async () => {
     const ipfsManager = new IpfsManager();
 
@@ -31,7 +32,7 @@ describe('saving on IPFS and anchoring on Registry contract', () => {
 
   it('...should store the file CID on-chain', async () => {
     // store the value of the CID
-    await registryManager.store(cid.toString());
+    ({ blockNumber: firstTransactionBlockNumber } = await registryManager.store(cid.toString()));
     const eventValues = await registryManager.getLastCidStored();
     // Get stored values
     const owner = await eventValues.owner;
@@ -50,11 +51,11 @@ describe('saving on IPFS and anchoring on Registry contract', () => {
   it('...should the last 2 registered CIDs match their corresponding values', async () => {
     // store the value of a dummy CID
     const DUMMY_CID = 'DUMMY_CID';
-    const { blockNumber } = await registryManager.store(DUMMY_CID);
-    const eventsValues = await registryManager.getPastCidStored({
-      filter: { owner: web3Manager.defaultAddress },
-      fromBlock: blockNumber - 1,
-    });
+    await registryManager.store(DUMMY_CID);
+    const eventsValues = await registryManager.getPastCidStored(
+      { fromBlock: firstTransactionBlockNumber },
+      web3Manager.defaultAddress
+    );
     assert.equal(eventsValues.length === 2, true);
     const lastEvent = eventsValues[eventsValues.length - 1];
     const pervOfLastEvent = eventsValues[eventsValues.length - 2];
